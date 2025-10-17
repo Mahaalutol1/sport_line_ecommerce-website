@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportLine - Sign Up</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    
+    <style>
+        body {
+            background: #1a1a1a;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .signup-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .signup-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .signup-logo img {
+            height: 60px;
+            border-radius: 10px;
+        }
+        
+        .signup-title {
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 15px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #4e4ffa;
+            color: #fff;
+            box-shadow: none;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Style for the select dropdown */
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 40px;
+        }
+
+        select.form-control option {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 15px;
+        }
+
+        select.form-control:focus option:hover {
+            background-color: #4e4ffa;
+        }
+
+        /* Style for the disabled placeholder option */
+        select.form-control option[disabled] {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-signup {
+            background: #4e4ffa;
+            color: #fff;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-signup:hover {
+            background: #0102fa;
+            transform: translateY(-2px);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+        }
+        
+        .login-link a {
+            color: #4e4ffa;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+        }
+        
+        .alert {
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 4px;
+            animation: slideIn 0.3s ease-in-out;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.9);
+            color: white;
+        }
+        
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="signup-container">
+        <div class="signup-logo">
+            <img src="{{ url_for('static', filename='img/images.jpg') }}" alt="SportLine Logo">
+        </div>
+        <h2 class="signup-title">Create Account</h2>
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div class="form-group">
+                <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email address" required>
+            </div>
+            <div class="form-group">
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="role" name="role" required onchange="toggleCityDropdown()">
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="customer">Customer</option>
+                    <option value="owner">Owner</option>
+                    <option value="employee">Employee</option>
+                    <option value="manager">Manager</option>
+                </select>
+            </div>
+            <div class="form-group" id="city-group" style="display:none;">
+                <select class="form-control" id="city" name="city">
+                    <option value="" disabled selected>Select your city (for managers)</option>
+                    <option value="Gaza City">Gaza City</option>
+                    <option value="Ramallah">Ramallah</option>
+                    <option value="Hebron">Hebron</option>
+                    <option value="Nablus">Nablus</option>
+                    <option value="Bethlehem">Bethlehem</option>
+                    <option value="Jericho">Jericho</option>
+                    <option value="Khan Yunis">Khan Yunis</option>
+                    <option value="Rafah">Rafah</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-signup">Sign Up</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </div>
+    </div>
+
+    <!-- Add JavaScript to auto-dismiss flash messages and toggle city dropdown -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+        function toggleCityDropdown() {
+            var role = document.getElementById('role').value;
+            var cityGroup = document.getElementById('city-group');
+            if (role === 'manager') {
+                cityGroup.style.display = '';
+                document.getElementById('city').setAttribute('required', 'required');
+            } else {
+                cityGroup.style.display = 'none';
+                document.getElementById('city').removeAttribute('required');
+            }
+        }
+    </script>
+</body>
+</html> 

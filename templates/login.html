@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportLine - Login</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    
+    <style>
+        body {
+            background: #1a1a1a;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo img {
+            height: 60px;
+            border-radius: 10px;
+        }
+        
+        .login-title {
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 15px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #4e4ffa;
+            color: #fff;
+            box-shadow: none;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-login {
+            background: #4e4ffa;
+            color: #fff;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-login:hover {
+            background: #0102fa;
+            transform: translateY(-2px);
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+        }
+        
+        .signup-link a {
+            color: #4e4ffa;
+            text-decoration: none;
+        }
+        
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+        }
+        
+        .alert {
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 4px;
+            animation: slideIn 0.3s ease-in-out;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.9);
+            color: white;
+        }
+        
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="login-container">
+        <div class="login-logo">
+            <img src="{{ url_for('static', filename='img/images.jpg') }}" alt="SportLine Logo">
+        </div>
+        <h2 class="login-title">Welcome to SportLine</h2>
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email address" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-login">Log In</button>
+        </form>
+        <div class="signup-link">
+            Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a>
+        </div>
+    </div>
+
+    <!-- Add JavaScript to auto-dismiss flash messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html> 

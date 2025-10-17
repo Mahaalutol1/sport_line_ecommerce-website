@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Warehouse</title>
+    <style>
+        body { background: #181818; color: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        .form-container { background: #23272f; max-width: 420px; margin: 3rem auto; padding: 2.5rem 2rem 2rem 2rem; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.18); }
+        h1 { text-align: center; margin-bottom: 2rem; color: #4e4ffa; font-size: 2rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #bfc9e0; }
+        input, select { width: 100%; padding: 0.7rem; margin-bottom: 1.5rem; border: 1px solid #333; border-radius: 6px; background: #181818; color: #f5f5f5; font-size: 1rem; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: #4e4ffa; outline: none; }
+        button, a { display: inline-block; padding: 0.7rem 1.5rem; border: none; border-radius: 6px; font-size: 1rem; font-weight: 500; text-decoration: none; margin-right: 0.5rem; transition: background 0.2s, color 0.2s; }
+        button[type="submit"] { background: #4e4ffa; color: #fff; cursor: pointer; }
+        button[type="submit"]:hover { background: #3737d6; }
+        a { background: #333; color: #fff; }
+        a:hover { background: #222; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Create New Warehouse</h1>
+        <form method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="capacity">Capacity:</label>
+            <input type="number" id="capacity" name="capacity" min="1" required>
+            <label for="address_id">Address:</label>
+            <select id="address_id" name="address_id" required>
+                <option value="">Select Address</option>
+                {% for addr in addresses %}
+                    <option value="{{ addr[0] }}">{{ addr[1] }}, {{ addr[2] }}, {{ addr[3] }} {{ addr[4] }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Create Warehouse</button>
+            <a href="{{ url_for('owner_dashboard') }}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html> 

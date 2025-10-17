@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}New Order | SportLine{% endblock %}
+
+{% block content %}
+<style>
+    .extra-card-space {
+        margin-bottom: 3rem !important;
+    }
+    .card.text-white, .card.text-white * {
+        color: #fff !important;
+    }
+    .card.text-white input[type="number"] {
+        color: #222 !important;
+        background: #fff !important;
+        border: 1px solid #ddd;
+    }
+    /* Modern search button styling */
+    .search-btn-custom {
+        background: #2d2b81;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 30px;
+        font-size: 1em;
+        transition: background 0.18s;
+        font-weight: 600;
+        box-shadow: 0 4px 14px rgba(50,50,80,0.06);
+    }
+    .search-btn-custom:hover {
+        background: #22215b;
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- Product Search Form -->
+    <form id="product-search-form" class="mb-4" autocomplete="off">
+        <div class="input-group">
+            <input type="text" id="search-query" class="form-control" placeholder="Search products..." aria-label="Search">
+            <button class="search-btn-custom" type="submit">
+                <!-- Optionally include an SVG or FontAwesome icon here -->
+                <svg width="1em" height="1em" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:6px;"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16a6.471 6.471 0 0 0 4.23-1.57l.27.28v.79l5 4.99a1 1 0 1 0 1.41-1.41l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z"></path></svg>
+                Search
+            </button>
+        </div>
+    </form>
+
+    <!-- Products Listing -->
+    <div id="product-list" class="row">
+        {% for product in products %}
+        <div class="col-md-4 extra-card-space">
+            <div class="card bg-secondary text-white h-100" style="border:none;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+                <img 
+                    src="{{ url_for('static', filename='img/' + (product['img_path'] or 'default.png')) }}"
+                    class="card-img-top"
+                    style="height:220px; object-fit:cover; border-top-left-radius:18px; border-top-right-radius:18px;"
+                    alt="{{ product['name'] }}"
+                >
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title" style="font-weight:600;">{{ product['name'] }}</h5>
+                    <p class="card-text mb-1" style="font-size:1.2em;">
+                        <strong>${{ "%.2f"|format(product['price']) }}</strong>
+                    </p>
+                    <p class="card-text mb-2" style="font-size:0.95em;">
+                        <small>{{ product['description'] }}</small>
+                    </p>
+                    <form method="POST" action="{{ url_for('add_to_cart') }}" class="mt-auto">
+                        <input type="hidden" name="product_id" value="{{ product['product_id'] }}">
+                        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required style="max-width:90px;">
+                        <button type="submit" class="btn welcome-btn btn-block" style="width:100%;border-radius:6px;">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-5">
+        <a href="{{ url_for('cart') }}" class="welcome-btn" style="font-size:1.1em;padding:12px 40px;">🛒 Go to Cart</a>
+    </div>
+</div>
+
+<!-- AJAX Search Script -->
+<script>
+document.getElementById('product-search-form').onsubmit = function(e) {
+    e.preventDefault();
+    const q = document.getElementById('search-query').value.trim();
+    fetch(`/api/products/search?q=${encodeURIComponent(q)}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById('product-list');
+            list.innerHTML = '';
+            if(!Array.isArray(data) || data.length === 0) {
+                list.innerHTML = '<div class="col-12 text-center"><p>No products found.</p></div>';
+                return;
+            }
+            data.forEach(product => {
+                // Handle img_path null or "None"
+                let imgPath = (product.img_path && product.img_path !== 'None') ? product.img_path : 'default.png';
+                list.innerHTML += `
+                <div class="col-md-4 extra-card-space">
+                    <div class="card bg-secondary text-white h-100" style="border:none;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+                        <img 
+                            src="/static/img/${imgPath}"
+                            class="card-img-top"
+                            style="height:220px; object-fit:cover; border-top-left-radius:18px; border-top-right-radius:18px;"
+                            alt="${product.name || ''}"
+                        >
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title" style="font-weight:600;">${product.name || ''}</h5>
+                            <p class="card-text mb-1" style="font-size:1.2em;">
+                                <strong>$${(product.price || 0).toFixed(2)}</strong>
+                            </p>
+                            <p class="card-text mb-2" style="font-size:0.95em;">
+                                <small>${product.description || ''}</small>
+                            </p>
+                            <form method="POST" action="/add_to_cart" class="mt-auto">
+                                <input type="hidden" name="product_id" value="${product.product_id}">
+                                <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required style="max-width:90px;">
+                                <button type="submit" class="btn welcome-btn btn-block" style="width:100%;border-radius:6px;">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+        });
+}
+</script>
+
+{% endblock %}

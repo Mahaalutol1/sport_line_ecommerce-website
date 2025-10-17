@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}SportLine{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
+
+    <!-- Favicon & Core CSS -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/images.jpg') }}" type="image/icon">
+    {% for css in ['font-awesome.min.css','linearicons.css','flaticon.css','animate.css','owl.carousel.min.css','owl.theme.default.min.css','bootstrap.min.css','bootsnav.css','style.css','responsive.css'] %}
+        <link rel="stylesheet" href="{{ url_for('static', filename=css) }}">
+    {% endfor %}
+
+    <style>
+        /* NAV – borrowed 1‑for‑1 from index.html so colour + spacing match */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background:#111; border-bottom:1px solid rgba(255,255,255,.08);
+        }
+        .navbar-default.navbar-fixed-top {height: 80px;}
+
+        /* FLEX centering fix for navbar! */
+        .navbar-nav, .navbar-right {
+            display: flex;
+            align-items: center;
+            height: 80px;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .navbar-nav>li {
+            display: flex;
+            align-items: center;
+            height: 80px;
+            margin: 0 5px;
+        }
+        .navbar-nav>li>a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            line-height: 40px;
+            padding: 0 15px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .nav-login, .nav-dashboard, .nav-logout {
+            margin-left:15px; padding:8px 20px!important; border-radius:5px; height:40px;
+            display:flex; align-items:center; justify-content: center; transition:.3s;
+        }
+        .nav-login{background:#4e4ffa; color:#fff!important;}
+        .nav-login:hover{background:#0102fa; transform:translateY(-2px);}
+        .nav-dashboard{background:rgba(78,79,250,.1); color:#4e4ffa!important; border:1px solid rgba(78,79,250,.3);}
+        .nav-dashboard:hover{background:rgba(78,79,250,.15); transform:translateY(-2px);}
+        .nav-logout{background:rgba(255,68,68,.1); color:#ff4444!important; border:1px solid rgba(255,68,68,.3);}
+        .nav-logout:hover{background:rgba(255,68,68,.15); transform:translateY(-2px);}       
+
+        @media (max-width:991.98px){
+            .navbar-nav,.navbar-right{height:auto; flex-direction:column;}
+            .navbar-nav>li>a{padding:12px 15px;}
+            .nav-login,.nav-dashboard,.nav-logout{margin:5px 15px; justify-content:center; height:40px!important;}
+        }
+
+        /* GLOBAL CONTAINER OFFSET SO CONTENT ISN'T HIDDEN BY THE FIXED NAV */
+        main{margin-top:100px;}
+    </style>
+</head>
+
+<body style="font-family:'Poppins', sans-serif;">
+    <!-- ========= NAVBAR ========= -->
+    <nav class="navbar navbar-default bootsnav navbar-sticky navbar-scrollspy" data-minus-value-desktop="70" data-minus-value-mobile="55" data-speed="800">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu"><i class="fa fa-bars"></i></button>
+                <a class="navbar-brand" href="{{ url_for('index') }}" style="display:flex;align-items:center;gap:10px;">
+                    <img src="{{ url_for('static', filename='img/images.jpg') }}" alt="SportLine Logo" style="height:40px;width:auto;">
+                    <span style="color:#fff;">SportLine</span>
+                </a>
+            </div>
+            <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+                <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                    <li><a href="{{ url_for('index') }}">HOME</a></li>
+                    <li><a href="{{ url_for('index') }}#service">ABOUT&nbsp;US</a></li>
+                    <li><a href="{{ url_for('index') }}#featured-products">Category</a></li>
+                    <li><a href="{{ url_for('index') }}#new-products">Recommended</a></li>
+                    <li><a href="{{ url_for('index') }}#brands">BRANDS</a></li>
+                    <li><a href="{{ url_for('index') }}#contact">CONTACT</a></li>
+                    {% if not session.get('user_id') %}
+                        <li><a href="{{ url_for('login') }}" class="nav-login">LOGIN</a></li>
+                    {% else %}
+                       <li>
+                        <a href="{{ get_dashboard_url() }}" class="nav-dashboard">DASHBOARD</a>
+                        </li>
+
+                        <li><a href="{{ url_for('logout') }}" class="nav-logout">LOGOUT</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========= PAGE CONTENT SLOT ========= -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ========= FOOTER (slightly tightened) ========= -->
+    <footer id="contact" class="contact" style="background:#000; color:#fff; padding:60px 0 40px;">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-sm-4 mb-4"><h4>SportLine</h4><p>Your ultimate source for sports nutrition.</p></div>
+                <div class="col-sm-4 mb-4"><h4>Support</h4><p>support@sportline.com<br>+&nbsp;(972)&nbsp;569569250</p></div>
+                <div class="col-sm-4 mb-4"><h4>Follow&nbsp;Us</h4>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/SportLine.Nutrition/"><i class="fa fa-facebook"></i></a>	
+						<a href="https://www.instagram.com/sportline.nutrition/"><i class="fa fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-color:rgba(255,255,255,.08);">
+            <p class="mb-0">&copy; 2025 SportLine. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Core JS → footer for performance -->
+    {% for js in ['jquery.js','bootstrap.min.js','bootsnav.js','owl.carousel.min.js','custom.js'] %}
+        <script src="{{ url_for('static', filename='js/' ~ js) if 'js/' not in js else url_for('static', filename=js) }}"></script>
+    {% endfor %}
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

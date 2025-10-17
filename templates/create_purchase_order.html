@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Purchase Order</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* ===== shared dark palette ===== */
+        :root{
+            --bg-body:#181818;
+            --bg-card:#23272f;
+            --accent:#4e4ffa;
+            --accent-hover:#3737d6;
+            --text-main:#f5f5f5;
+            --text-muted:#bfc9e0;
+            --border:#333;
+        }
+
+        /* Page chrome */
+        body{
+            margin:0;
+            padding:0;
+            background:var(--bg-body);
+            color:var(--text-main);
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            line-height:1.6;
+        }
+
+        .container{
+            max-width:1200px;
+            margin:3rem auto;
+            background:var(--bg-card);
+            padding:2.5rem 2rem;
+            border-radius:12px;
+            box-shadow:0 4px 24px rgba(0,0,0,0.18);
+        }
+
+        /* Header */
+        .page-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:2rem;
+            flex-wrap:wrap;
+            gap:1rem;
+        }
+        .page-title{
+            margin:0;
+            color:var(--accent);
+            font-size:2rem;
+        }
+
+        /* Buttons */
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            gap:.5rem;
+            padding:.6rem 1.2rem;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            text-decoration:none;
+            font-weight:500;
+            transition:background .2s;
+            font-size:1rem;
+        }
+        .btn i{margin:0;}
+        .btn-primary{background:var(--accent);color:#fff;}
+        .btn-primary:hover{background:var(--accent-hover);}
+        .btn-secondary{background:var(--border);color:#fff;}
+        .btn-secondary:hover{background:#222;}
+        .btn-add-item{background:#28a745;color:#fff;}       /* keep green for visual cue */
+        .btn-add-item:hover{background:#1e7a38;}
+        .btn-remove{background:#dc3545;color:#fff;}
+        .btn-remove:hover{background:#b02a37;}
+
+        /* Form elements */
+        .form-group{margin-bottom:1.5rem;}
+        label{
+            display:block;
+            margin-bottom:.5rem;
+            font-weight:500;
+            color:var(--text-muted);
+        }
+        select,input{
+            width:100%;
+            padding:.6rem;
+            border:1px solid var(--border);
+            border-radius:6px;
+            background:var(--bg-body);
+            color:var(--text-main);
+            font-size:1rem;
+            transition:border-color .2s;
+        }
+        select:focus,input:focus{
+            outline:none;
+            border-color:var(--accent);
+        }
+
+        /* Items list */
+        .items-container h3{margin-bottom:1rem;color:var(--text-main);}
+        .item-row{
+            display:grid;
+            grid-template-columns:2fr 1fr 1fr 1fr auto;
+            gap:1rem;
+            align-items:center;
+            padding:1rem;
+            background:#1f1f1f;
+            border-radius:6px;
+            margin-bottom:1rem;
+        }
+
+        /* Totals */
+        .total-section{
+            margin-top:2rem;
+            padding:1rem;
+            background:#1f1f1f;
+            border-radius:6px;
+        }
+        .total-row{
+            display:flex;
+            justify-content:space-between;
+            font-weight:500;
+            margin-bottom:.5rem;
+        }
+        .grand-total{
+            font-size:1.2rem;
+            font-weight:bold;
+            color:var(--accent);
+        }
+
+        /* Flash messages */
+        .alert{
+            padding:1rem;
+            border-radius:6px;
+            margin-bottom:1rem;
+        }
+        .alert-success{background:#1e4620;border:1px solid #2e7d32;color:#a5d6a7;}
+        .alert-error{background:#53202c;border:1px solid #c62828;color:#ef9a9a;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-file-invoice"></i> Create Purchase Order</h1>
+            <div class="actions">
+                {% if session.role == 'owner' %}
+                    <a href="{{ url_for('owner_dashboard') }}" class="btn btn-secondary">
+                {% elif session.role == 'manager' %}
+                    <a href="{{ url_for('manager_dashboard') }}" class="btn btn-secondary">
+                {% else %}
+                    <a href="{{ url_for('warehouse_dashboard') }}" class="btn btn-secondary">
+                {% endif %}
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" id="purchaseOrderForm" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="supplier_id">Supplier *</label>
+                <select name="supplier_id" id="supplier_id" required>
+                    <option value="">Select Supplier</option>
+                    {% for supplier in suppliers %}
+                        <option value="{{ supplier.supplier_id }}">{{ supplier.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="warehouse_id">Warehouse *</label>
+                <select name="warehouse_id" id="warehouse_id" required>
+                    <option value="">Select Warehouse</option>
+                    {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.warehouse_id }}">{{ warehouse.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="expected_delivery_date">Expected Delivery Date *</label>
+                <input type="date" name="expected_delivery_date"
+                       id="expected_delivery_date" required
+                       min="{{ now.strftime('%Y-%m-%d') }}">
+            </div>
+
+            <div class="items-container">
+                <h3>Order Items</h3>
+                <div id="itemsList"><!-- rows injected by JS --></div>
+                <button type="button" class="btn btn-add-item" onclick="addItemRow()">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            </div>
+
+            <div class="total-section">
+                <div class="total-row"><span>Subtotal:</span><span id="subtotal">$0.00</span></div>
+                <div class="total-row"><span>Tax (10%):</span><span id="tax">$0.00</span></div>
+                <div class="total-row grand-total"><span>Grand Total:</span><span id="grandTotal">$0.00</span></div>
+            </div>
+
+            <div style="margin-top:2rem;text-align:right;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Create Purchase Order
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- === JS CALCS (unchanged) === -->
+    <script>
+        const items = {{ items|tojson|safe }};
+        const itemRows = [];
+
+        function addItemRow(){
+            const itemsList=document.getElementById('itemsList');
+            const row=document.createElement('div');
+            row.className='item-row';
+            row.innerHTML=`
+                <select name="items[]" required onchange="updatePrice(this)">
+                    <option value="">Select Item</option>
+                    ${items.map(item=>`
+                        <option value="${item.item_id}" data-price="${item.price}">
+                            ${item.name}
+                        </option>
+                    `).join('')}
+                </select>
+                <input type="number" name="quantities[]" min="1" required
+                       onchange="updateTotal()" placeholder="Quantity">
+                <input type="number" name="prices[]" step="0.01" min="0" required
+                       onchange="updateTotal()" placeholder="Unit Price" readonly>
+                <span class="row-total">$0.00</span>
+                <button type="button" class="btn btn-remove" onclick="removeItemRow(this)">
+                    <i class="fas fa-trash"></i>
+                </button>`;
+            itemsList.appendChild(row);
+            itemRows.push(row);
+            updateTotal();
+        }
+
+        function removeItemRow(button){
+            const row=button.parentElement;
+            const idx=itemRows.indexOf(row);
+            if(idx>-1){itemRows.splice(idx,1);}
+            row.remove();updateTotal();
+        }
+
+        function updatePrice(select){
+            const price=select.options[select.selectedIndex].dataset.price;
+            select.parentElement.querySelector('input[name="prices[]"]').value=price;
+            updateTotal();
+        }
+
+        function updateTotal(){
+            let subtotal=0;
+            itemRows.forEach(r=>{
+                const q=parseFloat(r.querySelector('input[name="quantities[]"]').value)||0;
+                const p=parseFloat(r.querySelector('input[name="prices[]"]').value)||0;
+                const t=q*p;
+                r.querySelector('.row-total').textContent=`$${t.toFixed(2)}`;
+                subtotal+=t;
+            });
+            const tax=subtotal*0.1;
+            const grand=subtotal+tax;
+            document.getElementById('subtotal').textContent=`$${subtotal.toFixed(2)}`;
+            document.getElementById('tax').textContent=`$${tax.toFixed(2)}`;
+            document.getElementById('grandTotal').textContent=`$${grand.toFixed(2)}`;
+        }
+
+        function validateForm(){
+            if(itemRows.length===0){alert('Please add at least one item.');return false;}
+            const empty=itemRows.some(r=>{
+                const s=r.querySelector('select').value;
+                const q=r.querySelector('input[name="quantities[]"]').value;
+                const p=r.querySelector('input[name="prices[]"]').value;
+                return !s||!q||!p;
+            });
+            if(empty){alert('Please fill in all item details.');return false;}
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded',addItemRow);
+    </script>
+</body>
+</html>

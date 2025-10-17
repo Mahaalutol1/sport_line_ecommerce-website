@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Customer</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    /* ===== shared dark palette ===== */
+    :root{
+      --bg-body:#181818;
+      --bg-card:#23272f;
+      --accent:#4e4ffa;
+      --accent-hover:#3737d6;
+      --text-main:#f5f5f5;
+      --text-muted:#bfc9e0;
+      --border:#333;
+    }
+
+    /* page chrome */
+    body{
+      margin:0;
+      padding:0;
+      background:var(--bg-body);
+      color:var(--text-main);
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      line-height:1.6;
+    }
+
+    /* card wrapper */
+    .form-card{
+      background:var(--bg-card);
+      max-width:600px;
+      margin:3rem auto;
+      padding:2.5rem 2rem;
+      border-radius:12px;
+      box-shadow:0 4px 24px rgba(0,0,0,0.18);
+    }
+
+    /* headings */
+    .form-card h3{
+      color:var(--accent);
+      text-align:center;
+      margin-bottom:1.5rem;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:.5rem;
+    }
+
+    /* labels & inputs */
+    label{
+      color:var(--text-muted);
+      margin-bottom:.25rem;
+      font-weight:500;
+    }
+    .form-control{
+      width:100%;
+      padding:.6rem .75rem;
+      border:1px solid var(--border);
+      border-radius:6px;
+      background:var(--bg-body);
+      color:var(--text-main);
+      font-size:1rem;
+      transition:border-color .2s;
+    }
+    .form-control:focus{
+      outline:none;
+      border-color:var(--accent);
+    }
+
+    /* bootstrap-ish utilities (minimal) */
+    .mb-2{margin-bottom:.75rem;}
+    .mt-3{margin-top:1rem;}
+    .row{display:flex;flex-wrap:wrap;margin-right:-.5rem;margin-left:-.5rem;}
+    .g-2>*{padding:.5rem;}
+    .col-12{flex:0 0 100%;max-width:100%;}
+    .col-6{flex:0 0 50%;max-width:50%;}
+    .col-3{flex:0 0 25%;max-width:25%;}
+
+    /* buttons */
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.6rem 1.4rem;
+      border:none;
+      border-radius:6px;
+      font-size:1rem;
+      font-weight:500;
+      cursor:pointer;
+      text-decoration:none;
+      transition:background .2s;
+    }
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .btn-secondary{background:var(--border);color:#fff;}
+    .btn-secondary:hover{background:#222;}
+
+    hr{border-color:var(--border);}
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h3><i class="fas fa-user-plus"></i> Add Customer</h3>
+
+    <form method="POST">
+      <div class="mb-2">
+        <label>Full Name</label>
+        <input name="full_name" class="form-control" required>
+      </div>
+
+      <div class="mb-2">
+        <label>Email</label>
+        <input name="email" type="email" class="form-control" required>
+      </div>
+
+      <div class="mb-2">
+        <label>Password</label>
+        <input name="password" type="password" class="form-control" required>
+      </div>
+
+      <div class="mb-2">
+        <label>Phone</label>
+        <input name="phone" class="form-control">
+      </div>
+
+      <hr>
+      <h5 style="margin:.5rem 0 1rem;color:var(--text-main);">Address</h5>
+
+      <div class="row g-2">
+        <div class="col-12">
+          <input name="street" class="form-control" placeholder="Street" required>
+        </div>
+        <div class="col-6">
+          <input name="city" class="form-control" placeholder="City" required>
+        </div>
+        <div class="col-3">
+          <input name="state" class="form-control" placeholder="State" required>
+        </div>
+        <div class="col-3">
+          <input name="postal" class="form-control" placeholder="Postal" required>
+        </div>
+        <div class="col-12">
+          <input name="country" class="form-control" placeholder="Country" value="PAL">
+        </div>
+      </div>
+
+      <button class="btn btn-primary mt-3"><i class="fas fa-save"></i> Save</button>
+      <a href="{{ request.referrer or url_for('employee_dashboard') }}"
+         class="btn btn-secondary mt-3"><i class="fas fa-times"></i> Cancel</a>
+    </form>
+  </div>
+
+</body>
+</html>

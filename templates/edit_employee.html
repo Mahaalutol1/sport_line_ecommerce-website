@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Employee - Warehouse Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ===== shared dark theme ===== */
+        :root {
+            --bg-body: #181818;
+            --bg-card: #23272f;
+            --accent:  #4e4ffa;
+            --accent-hover:#3737d6;
+            --text-main:#f5f5f5;
+            --text-muted:#bfc9e0;
+            --border:#333;
+        }
+
+        /* Page chrome */
+        body{
+            margin:0;
+            padding:0;
+            background:var(--bg-body);
+            color:var(--text-main);
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+        }
+
+        /* Card-style container */
+        .container{
+            max-width:840px;
+            margin:3rem auto;
+            background:var(--bg-card);
+            padding:2.5rem 2rem;
+            border-radius:12px;
+            box-shadow:0 4px 24px rgba(0,0,0,0.18);
+        }
+
+        h1{
+            text-align:center;
+            color:var(--accent);
+            font-size:2rem;
+            margin-bottom:2rem;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:.5rem;
+        }
+
+        /* Form layout */
+        .form-row{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:1.5rem;
+        }
+
+        .form-group{margin-bottom:1.5rem;}
+
+        label{
+            display:block;
+            margin-bottom:.5rem;
+            font-weight:500;
+            color:var(--text-muted);
+        }
+
+        input,
+        select{
+            width:100%;
+            padding:.7rem;
+            font-size:1rem;
+            border:1px solid var(--border);
+            border-radius:6px;
+            background:var(--bg-body);
+            color:#fff;
+            transition:border-color .2s;
+        }
+        input:focus,
+        select:focus{
+            outline:none;
+            border-color:var(--accent);
+        }
+
+        /* Buttons */
+        .btn-group{margin-top:2rem;display:flex;gap:.8rem;flex-wrap:wrap;}
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            gap:.5rem;
+            padding:.7rem 1.5rem;
+            border:none;
+            border-radius:6px;
+            font-size:1rem;
+            font-weight:500;
+            text-decoration:none;
+            transition:background .2s;
+            cursor:pointer;
+        }
+        .btn-primary{background:var(--accent);color:#fff;}
+        .btn-primary:hover{background:var(--accent-hover);}
+        .btn-secondary{background:var(--border);color:#fff;}
+        .btn-secondary:hover{background:#222;}
+
+        /* Flash messages */
+        .alert{
+            padding:1rem;
+            border-radius:6px;
+            margin-bottom:1rem;
+            font-size:.95rem;
+        }
+        .alert-success{background:#1e4620;border:1px solid #2e7d32;color:#a5d6a7;}
+        .alert-danger{background:#53202c;border:1px solid #c62828;color:#ef9a9a;}
+
+        .password-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-user-edit"></i> Edit Employee</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('edit_employee', employee_id=employee.id) }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ employee.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ employee.email }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Leave blank to keep current password">
+                <div class="password-note">Only fill this if you want to change the password</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" value="{{ employee.phone }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="position">Position</label>
+                    <select id="position" name="position" required>
+                        <option value="">Select Position</option>
+                        <option value="Manager" {% if employee.position == 'Manager' %}selected{% endif %}>Manager</option>
+                        <option value="Sales Representative" {% if employee.position == 'Sales Representative' %}selected{% endif %}>Sales Representative</option>
+                        <option value="Warehouse Worker" {% if employee.position == 'Warehouse Worker' %}selected{% endif %}>Warehouse Worker</option>
+                        <option value="Accountant" {% if employee.position == 'Accountant' %}selected{% endif %}>Accountant</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="salary">Salary</label>
+                    <input type="number" id="salary" name="salary" min="0" step="0.01" value="{{ employee.salary }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="hire_date">Hire Date</label>
+                    <input type="date" id="hire_date" name="hire_date" value="{{ employee.hire_date }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="warehouse">Warehouse</label>
+                    <select id="warehouse" name="warehouse_id">
+                        <option value="">Select Warehouse (Optional)</option>
+                        {% for warehouse in warehouses %}
+                        <!-- Debug: {{ warehouse }} -->
+                        <option value="{{ warehouse[0] }}" {% if employee.warehouse_id and employee.warehouse_id|int == warehouse[0]|int %}selected{% endif %}>
+                            {{ warehouse[1] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="branch">Branch</label>
+                    <select id="branch" name="branch_id">
+                        <option value="">Select Branch (Optional)</option>
+                        {% for branch in branches %}
+                        <!-- Debug: {{ branch }} -->
+                        <option value="{{ branch[0] }}" {% if employee.branch_id and employee.branch_id|int == branch[0]|int %}selected{% endif %}>
+                            {{ branch[1] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="{{ url_for('owner_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html> 

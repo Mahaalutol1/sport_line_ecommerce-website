@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    /* ===== shared dark palette ===== */
+    :root{
+      --bg-body:#181818;
+      --bg-card:#23272f;
+      --accent:#4e4ffa;
+      --accent-hover:#3737d6;
+      --text-main:#f5f5f5;
+      --text-muted:#bfc9e0;
+      --border:#333;
+    }
+
+    /* page chrome */
+    body{
+      margin:0;
+      padding:0;
+      background:var(--bg-body);
+      color:var(--text-main);
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      line-height:1.6;
+    }
+
+    /* card wrapper */
+    .form-card{
+      background:var(--bg-card);
+      max-width:600px;
+      margin:3rem auto;
+      padding:2.5rem 2rem;
+      border-radius:12px;
+      box-shadow:0 4px 24px rgba(0,0,0,0.18);
+    }
+
+    /* headings */
+    .form-card h3{
+      color:var(--accent);
+      text-align:center;
+      margin-bottom:1.5rem;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:.5rem;
+    }
+
+    /* labels & inputs */
+    label{
+      color:var(--text-muted);
+      margin-bottom:.25rem;
+      font-weight:500;
+    }
+    .form-control{
+      width:100%;
+      padding:.6rem .75rem;
+      border:1px solid var(--border);
+      border-radius:6px;
+      background:var(--bg-body);
+      color:var(--text-main);
+      font-size:1rem;
+      transition:border-color .2s;
+    }
+    .form-control:focus{
+      outline:none;
+      border-color:var(--accent);
+    }
+    textarea.form-control{resize:vertical;}
+
+    /* bootstrap-ish utilities */
+    .row{display:flex;flex-wrap:wrap;margin-right:-.5rem;margin-left:-.5rem;}
+    .g-2>*{padding:.5rem;}
+    .col{flex:1 0 0%;}
+    .mb-2{margin-bottom:.75rem;}
+    .mt-3{margin-top:1rem;}
+
+    /* buttons */
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.6rem 1.4rem;
+      border:none;
+      border-radius:6px;
+      font-size:1rem;
+      font-weight:500;
+      cursor:pointer;
+      text-decoration:none;
+      transition:background .2s;
+    }
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .btn-secondary{background:var(--border);color:#fff;}
+    .btn-secondary:hover{background:#222;}
+
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h3><i class="fas fa-box-open"></i> Add Product</h3>
+
+    <form method="POST">
+      <div class="mb-2">
+        <label>Name</label>
+        <input name="name" class="form-control" required>
+      </div>
+
+      <div class="row g-2">
+        <div class="col">
+          <label>Price</label>
+          <input name="price" type="number" step="0.01" class="form-control" required>
+        </div>
+        <div class="col">
+          <label>Cost Price</label>
+          <input name="cost_price" type="number" step="0.01" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <label>Category</label>
+        <input name="category" class="form-control">
+      </div>
+
+      <div class="mb-2">
+        <label>Description</label>
+        <textarea name="description" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div class="mb-2">
+        <label>Image filename (optional)</label>
+        <input name="img_path" class="form-control">
+      </div>
+
+      <button class="btn btn-primary mt-3"><i class="fas fa-save"></i> Save</button>
+      <a href="{{ request.referrer or url_for('employee_dashboard') }}"
+         class="btn btn-secondary mt-3"><i class="fas fa-times"></i> Cancel</a>
+    </form>
+  </div>
+
+</body>
+</html>
